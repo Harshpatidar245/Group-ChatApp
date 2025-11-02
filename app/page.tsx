@@ -15,11 +15,19 @@ export default function Home() {
   const [availableRooms, setAvailableRooms] = useState<{ name: string }[]>([]);
   const [newRoomName, setNewRoomName] = useState("");
 
+  // Fetch user and rooms on mount
   useEffect(() => {
     (async () => {
-      const res = await fetch("/api/user");
-      const data = await res.json();
-      if (data?.ok && data?.user) setUser(data.user);
+      try {
+        const res = await fetch("/api/user");
+        const data = await res.json();
+        if (data?.ok && data?.user) setUser(data.user);
+      } catch {
+        console.error("Failed to fetch user");
+      }
+
+      // Fetch all rooms from DB (not just sockets)
+      await fetchRooms();
     })();
 
     socket.on("receive-message", (data: { username: string; message: string; createdAt?: string }) => {
@@ -27,9 +35,7 @@ export default function Home() {
     });
 
     socket.on("rooms-list", (rooms: { name: string }[]) => setAvailableRooms(rooms || []));
-    socket.on("user_joined", (msg: string) =>
-      setMessages((prev) => [...prev, { sender: "system", message: msg }])
-    );
+    socket.on("user_joined", (msg: string) => setMessages((prev) => [...prev, { sender: "system", message: msg }]));
     socket.on("room-messages", (msgs: { sender: string; message: string; createdAt?: string }[]) =>
       setMessages(msgs.map((m) => ({ sender: m.sender, message: m.message, createdAt: m.createdAt })))
     );
@@ -43,6 +49,16 @@ export default function Home() {
       socket.off("room-messages");
     };
   }, []);
+
+  const fetchRooms = async () => {
+    try {
+      const res = await fetch("/api/rooms/get");
+      const data = await res.json();
+      if (data.ok) setAvailableRooms(data.rooms || []);
+    } catch (err) {
+      console.error("Failed to load rooms:", err);
+    }
+  };
 
   const handleSendMessage = (message: string) => {
     if (!message.trim() || !room) return;
@@ -78,12 +94,14 @@ export default function Home() {
     }
   };
 
-  const handleCreateRoom = () => {
+  const handleCreateRoom = async () => {
     const name = newRoomName.trim();
     if (!name) return alert("Enter room name");
-    socket.emit("create-room", { name }, (res: any) => {
+
+    socket.emit("create-room", { name }, async (res: any) => {
       if (res?.success) {
         setNewRoomName("");
+        await fetchRooms(); // refresh room list from DB
       } else {
         alert("Failed to create room: " + (res?.error || "unknown"));
       }
