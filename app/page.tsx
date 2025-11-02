@@ -347,3 +347,75 @@ export default function Home() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// "use client";
+
+// import useChatLogic from "@/hooks/useChatLogic";
+// import AuthSection from "@/components/chat/AuthSection";
+// import SidebarUsers from "@/components/chat/SidebarUsers";
+// import RoomsSection from "@/components/chat/RoomsSection";
+// import ChatArea from "@/components/chat/ChatArea";
+
+// export default function Home() {
+//   const chat = useChatLogic();
+
+//   if (!chat.user) {
+//     return (
+//       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+//         <AuthSection />
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-start justify-center py-12 px-4">
+//       <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-6">
+//         {/* Users Sidebar */}
+//         <SidebarUsers
+//           onSelectUser={chat.handleSelectUser}
+//           selectedUserId={chat.selectedUser?._id}
+//         />
+
+//         {/* Rooms Sidebar */}
+//         <RoomsSection
+//           onSelectRoom={chat.handleSelectRoom}
+//           selectedRoomId={chat.selectedRoom?._id}
+//         />
+
+//         {/* Chat Area */}
+//         <ChatArea
+//           roomId={chat.selectedRoom?._id}
+//           userId={chat.user.id}
+//           recipientId={chat.selectedUser?._id}
+//           title={
+//             chat.selectedRoom
+//               ? `Room: ${chat.selectedRoom.name}`
+//               : chat.selectedUser
+//               ? `Chat with ${chat.selectedUser.name}`
+//               : "Select a chat"
+//           }
+//         />
+//       </div>
+//     </div>
+//   );
+// }
