@@ -27,9 +27,9 @@ function dmRoomId(userA: string, userB: string) {
 app.prepare().then(async () => {
   try {
     await connectDB();
-    console.log("✅ Connected to MongoDB");
+    console.log("Connected to MongoDB");
   } catch (err) {
-    console.error("❌ MongoDB connection error:", err);
+    console.error("MongoDB connection error:", err);
   }
 
   const httpServer = createServer((req, res) => handle(req, res));
@@ -56,7 +56,7 @@ app.prepare().then(async () => {
         const rooms = await Room.find({}, { name: 1, createdAt: 1 }).sort({ createdAt: -1 }).lean();
         socket.emit("rooms-list", rooms);
       } catch (err) {
-        console.error("❌ get-rooms error:", err);
+        console.error("get-rooms error:", err);
       }
     });
 
@@ -77,7 +77,7 @@ app.prepare().then(async () => {
         io.emit("rooms-list", rooms);
         callback?.({ success: true, room });
       } catch (err) {
-        console.error("❌ create-room error:", err);
+        console.error("create-room error:", err);
         callback?.({ success: false, error: String(err) });
       }
     });
@@ -96,7 +96,7 @@ app.prepare().then(async () => {
 
         callback?.({ success: true });
       } catch (err) {
-        console.error("❌ join-room error:", err);
+        console.error("join-room error:", err);
         callback?.({ success: false, error: String(err) });
       }
     });
@@ -110,7 +110,7 @@ app.prepare().then(async () => {
         const msg = await Message.create({ room, sender: username, message });
         io.to(room).emit("receive-message", { username, message, createdAt: msg.createdAt });
       } catch (err) {
-        console.error("❌ send-message error:", err);
+        console.error("send-message error:", err);
       }
     });
 
@@ -153,7 +153,7 @@ app.prepare().then(async () => {
 
           callback?.({ success: true, msg });
         } catch (err) {
-          console.error("❌ send-direct error:", err);
+          console.error("send-direct error:", err);
           callback?.({ success: false, error: String(err) });
         }
       }
@@ -167,7 +167,7 @@ app.prepare().then(async () => {
         const msgs = await Message.find({ room: dmRoom }).sort({ createdAt: 1 }).lean();
         callback?.({ success: true, messages: msgs });
       } catch (err) {
-        console.error("❌ get-dm-messages error:", err);
+        console.error("get-dm-messages error:", err);
         callback?.({ success: false, error: String(err) });
       }
     });
@@ -181,5 +181,5 @@ app.prepare().then(async () => {
     });
   });
 
-  httpServer.listen(port, () => console.log(`🚀 Server running at http://${hostname}:${port}`));
+  httpServer.listen(port, () => console.log(`Server running at http://${hostname}:${port}`));
 });

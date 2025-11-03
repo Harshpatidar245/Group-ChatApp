@@ -1,4 +1,3 @@
-// components/ChatMessage.tsx
 "use client";
 import React from "react";
 
